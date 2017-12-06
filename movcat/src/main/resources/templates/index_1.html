@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>BoBoKu</title>
+    <link rel="stylesheet" type="text/css" href="../css/reset.css" />
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+    <script type="text/javascript" src="../js/iconfont.js"></script>
+    <script src="http://www.jq22.com/jquery/jquery-2.1.1.js"></script>
+    <script>
+        function goDetail(id) {
+            window.location.href = "/variety/getVarietyDetail?id="+id;
+        }
+    </script>
+    <style type="text/css">
+        .icon {
+            width: 1em; height: 1em;
+            vertical-align: -0.15em;
+            fill: currentColor;
+            overflow: hidden;
+            font-size: 28px;
+            margin-left: 10px;
+            margin-top: 3px;
+        }
+        .icon_1 {
+            width: 1em; height: 1em;
+            vertical-align: -0.15em;
+            fill: currentColor;
+            overflow: hidden;
+            font-size: 20px;
+            margin-top: 244px;
+            margin-left: 34px;
+        }
+        #container {
+            height: 500px;
+            margin: 300px auto;
+        }
+        div.search {padding: 30px 0;}
+
+        form {
+            position: relative;
+            width: 650px;
+            margin: 0 auto;
+        }
+
+        input, button {
+            border: none;
+            outline: none;
+        }
+
+        input {
+            width: 100%;
+            height: 42px;
+            padding-left: 13px;
+        }
+
+        button {
+            height: 42px;
+            width: 42px;
+            cursor: pointer;
+            position: absolute;
+        }
+        /*搜索框5*/
+        .bar5 input, .bar5 button {
+            background: transparent;
+        }
+        .bar5 input {
+            border: 2px solid rgba(245, 128, 63, 0.82);
+        }
+        .bar5 button {
+            top: 0;
+            right: 0;
+        }
+        .bar5 input:focus {
+            border-color: #311c24
+        }
+        .cat{
+            position: relative;
+            margin: 0 auto;
+            width: 1285px;
+        }
+        .cat div{
+            float:left;
+            margin: 160px 30px;
+        }
+        .cat img{
+            height: 100px;
+        }
+        .cat p{
+            font-size: 10px;
+            text-align: center;
+            color: rgb(93, 78, 24);
+        }
+        /*效果一：360°旋转 修改rotate(旋转度数)*/
+        .cat img:hover{
+            transition: All 0.4s ease-in-out;
+            transform: rotate(40deg);
+        }
+    </style>
+</head>
+<body>
+    <div style="position: relative;left: 95%;">
+        <a href="javascript:void(0);" style="font-size: 13px">登录</a>
+        <span style="font-size: 13px">|</span>
+        <a href="javascript:void(0);" style="font-size: 13px;">注册</a>
+    </div>
+    <div id="container">
+        <div class="search bar5">
+            <form>
+                <input type="text" placeholder="BoBoKu..." />
+                <button type="submit">
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-icon-copy"></use>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <div class="cat">
+            <div th:each="variety : ${varietyList}">
+                <a href="javascript:void(0);" th:onclick="'javascript:goDetail('+${variety.id}+')'">
+                    <img th:src="${variety.img}" />
+                    <p th:text="${variety.englishName}" />
+                    <p th:text="${variety.name}" />
+                </a>
+            </div>
+        </div>
+        <div>
+            <a href="#">
+                <svg class="icon_1" aria-hidden="true">
+                    <use xlink:href="#icon-gengduo"></use>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+        Launch demo modal
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

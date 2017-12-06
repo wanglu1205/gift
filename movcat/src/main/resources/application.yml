@@ -1,0 +1,36 @@
+spring:
+  #mysql配置
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://106.14.187.139:3306/movcat
+    username: root
+    password: wwl69810262
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  #redis配置
+  redis:
+      host: 106.14.187.139
+      port: 6379
+      database: 0
+      timeout: 0
+      pool:
+        max-active: 8
+        max-wait: -1
+        min-idle: 0
+        max-idle: 8
+  #thymeleaf模板配置
+  thymeleaf:
+    prefix: classpath:/templates
+    suffix: .html
+    mode: HTML5
+    encoding: UTF-8
+    content-type: text/html
+    cache: false
+    enabled: true
+
+#端口
+server:
+  port: 80
+

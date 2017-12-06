@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="../css/demo.css" />
+    <link rel="stylesheet" type="text/css" href="../css/component.css" />
+    <script type="text/javascript" src="../js/iconfont.js"></script>
+    <script src="../js/modernizr.custom.js"></script>
+    <script src="../js/masonry.pkgd.min.js"></script>
+    <script src="../js/imagesloaded.pkgd.min.js"></script>
+    <script src="../js/classie.js"></script>
+    <script src="../js/colorfinder-1.1.js"></script>
+    <script src="../js/gridScrollFx.js"></script>
+    <script src="http://www.jq22.com/jquery/jquery-2.1.1.js"></script>
+    <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+    <style type="text/css">
+        .ul{
+            list-style: none;
+            text-align: center;
+        }
+        .ul li{
+            padding: 5px 0;
+            float: left;
+            width: 304px;
+        }
+        .icon {
+            width: 1em; height: 1em;
+            vertical-align: -0.15em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+        #navigation{
+            position: fixed;
+            width: 100%;
+            height: 51px;
+            z-index: 100;
+            background-color:rgba(0, 0, 0, 0.51);
+            box-shadow:0 0 4px rgba(0,0,0,.2);
+        }
+        .title{
+            padding: 10px;
+            font-size: 10px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 100;
+            position: relative;
+            top: -6px;
+        }
+        .media-heading{
+            margin-top: 2px;
+            margin-bottom: 10px;
+        }
+        .media{
+            padding-top: 40px;
+            border-top: 1px solid #f0f0f0;
+        }
+    </style>
+    <script>
+        function sendCode(obj) {
+            var registertelvalue = $("#registertel").val();
+            $.post("/sendCode",
+                {'telOrEmail':registertelvalue},
+                function(data){
+                    if (!data.success){
+                        $(".cue_1").text(data.msg);
+                    }else {
+                        settime(obj);
+                    }
+                });
+
+        }
+
+        //发送验证码倒计时
+        var countdown = 60;
+        function settime(obj) {
+            if (countdown == 0) {
+                obj.removeAttribute("disabled");
+                $("#code").text("发送验证码");
+                countdown = 60;
+                return;
+            } else {
+                obj.setAttribute("disabled", true);
+                $("#code").text("重新发送(" + countdown + ")");
+                countdown--;
+            }
+            setTimeout(function() {
+                    settime(obj) }
+                ,1000)
+        }
+
+        //登录
+        function login() {
+            var logintelvalue = $("#logintel").val();
+            var loginpassword = $("#loginpassword").val();
+            if (logintelvalue == ''){
+                $(".cue").text("请输入手机号或邮箱");
+                return;
+            }
+            if (loginpassword == ''){
+                $(".cue").text("请输入密码");
+                return;
+            }
+            $.post("/login",
+                {'telOrEmail':logintelvalue, 'password':loginpassword},
+                function(data){
+                    if (data.success){
+                        window.location.reload();
+                    }else {
+                        $(".cue").text(data.msg);
+                    }
+                });
+        }
+
+        //注册
+        function register() {
+            var registertel = $("#registertel").val();
+            var registercode = $("#registercode").val();
+            var registerpassword = $("#registerpassword").val();
+            $.post("/register",
+                {'telOrEmail':registertel, 'code':registercode, 'password':registerpassword},
+                function(data){
+                    if (data.success){
+                        alert(data.data);
+                    }else {
+                        $(".cue_1").text(data.msg);
+                    }
+                });
+        }
+
+        /*$(function () {
+            //输入框失去焦点
+            $(".write").blur(function () {
+                var text = $(".write").text();
+                if (text == ''){
+                    $(".write").html("说点什么吧...");
+                }
+            })
+            //输入框获取焦点
+            $(".write").focus(function () {
+                $(".write").text("");
+            })
+        })*/
+    </script>
+
+</head>
+<body style="height: 1501px;">
+    <div>
+        <span id="navigation">
+            <span style="margin-left: 200px;">
+                <svg class="icon" aria-hidden="true" style="font-size: 32px;margin-left: 25px;margin-top: 9px;">
+                    <use xlink:href="#icon-icon-copy-copy"></use>
+                </svg>
+                <span style="font-size: 28px;color: #fff;font-weight: 100;position: relative;top: -1px;">猫爪</span>
+                <span class="title" style="padding-bottom: 5px;border-bottom:  1px solid #fff;margin-left: 12px">首页</span>
+                <span class="title">发现</span>
+                <span class="title">最新</span>
+                <span class="title">活动</span>
+                <span class="title">小喵</span>
+                <span class="title">大喵</span>
+                <svg class="icon" aria-hidden="true" style="font-size: 30px;margin-top: 9px;position: relative;right: 5px;">
+                    <use xlink:href="#icon-new4"></use>
+                </svg>
+                <div class="btn-group">
+                  <button style="background-color: rgba(0, 255, 255, 0);color: #fff;font-size: 15px;border-color: rgba(46, 109, 164, 0);
+                    margin-top: -15px;font-weight: 100;" type="button"
+                          class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    更多 <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" style="background-color: rgba(245, 245, 220, 0.53);min-width: 72px;">
+                    <li><a href="#">美思</a></li>
+                    <li>
+                        <a href="#">美素</a>
+                    </li>
+                    <li><a href="#">美体</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">猫爪</a></li>
+                  </ul>
+                </div>
+            </span>
+            <span style="position: absolute;left: 82%;top: 8px;" th:if="${session.LOGIN_USER == null}">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="background-color: rgba(251, 17, 17, 0.65);border-color: rgba(251, 17, 17, 0.65);">
+                    登录
+                </button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal_1" style="background: rgba(0, 0, 0, 0);border-color: #fff;margin-left: 5px;">
+                    注册
+                </button>
+            </span>
+            <span style="position: absolute;left: 82%;top: 8px;" th:if="${session.LOGIN_USER != null}">
+                <img th:src="${session.LOGIN_USER.imgUrl}" alt="" style="height: 35px;width: 35px;display: inline-block;border: 1px solid #fff;"/>
+                <span th:text="${session.LOGIN_USER.name}" style="margin-left: 10px;color: #fff;font-size: 15px;"></span>
+            </span>
+        </span>
+    <span style="position: absolute;right: 200px;top: 8px;">
+
+        </span>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width: 450px;margin: 0 auto;margin-top: 200px;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <svg class="icon" aria-hidden="true" style="font-size: 28px;margin-top: 9px;">
+                        <use xlink:href="#icon-icon-copy"></use>
+                    </svg>
+                    <span class="modal-title" id="myModalLabel" style="font-size: 21px;position: relative;top: -3px;left: 2px;">登录</span>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align: center;color: rgba(0, 0, 0, 0.35);">——  使用手机号/邮箱登录猫爪  ——</div>
+                    <div class="input-group input-group-lg" style="margin-top: 16px;">
+                            <span class="input-group-addon" id="basic-addon1">
+                                <svg class="icon" aria-hidden="true" style="font-size: 22px;">
+                                  <use xlink:href="#icon-yonghuming1"></use>
+                                </svg>
+                            </span>
+                        <input type="text" class="form-control" placeholder="手机号/邮箱" aria-describedby="basic-addon1" id="logintel" />
+                    </div><br></br>
+                    <div class="input-group  input-group-lg">
+                            <span class="input-group-addon" id="basic-addon2">
+                                <svg class="icon" aria-hidden="true" style="font-size: 22px;">
+                                  <use xlink:href="#icon-mima"></use>
+                                </svg>
+                            </span>
+                        <input type="password" class="form-control" placeholder="密码" aria-describedby="basic-addon2" id="loginpassword" />
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span style="margin-left: 2%;"><a href="#">忘记密码>></a></span><span class="cue"></span>
+                    </div>
+                    <div style="text-align: center;color: rgba(0, 0, 0, 0.35);margin-top: 16px;">——  用第三方帐号注册猫爪  ——</div>
+                    <div style="position: relative;margin-top: 15px;left: 38%;">
+                        <svg class="icon" aria-hidden="true" style="font-size: 50px;" th:onmouseover="'javascript:changeqq()'" th:onmouseout="'javascript:resetqq()'">
+                            <use xlink:href="#icon-weixin-" id="qq"></use>
+                        </svg>
+                        <svg class="icon" aria-hidden="true" style="font-size: 50px;" th:onmouseover="'javascript:changewb()'" th:onmouseout="'javascript:resetwb()'">
+                            <use xlink:href="#icon-weibo" id="wb"></use>
+                        </svg>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <span>还没有猫爪账号?</span>
+                    <span><a href="#" th:onclick="'javascript:gologin()'" style="margin-right: 117px;">立即注册>></a></span>
+                    <button type="button" class="btn btn-primary" style="border-color: #fff;background-color: #fbd34a;width: 110px;" th:onclick="'javascript:login()'">登录</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal_1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width: 450px;margin: 0 auto;margin-top: 200px;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <svg class="icon" aria-hidden="true" style="font-size: 28px;margin-top: 9px;">
+                        <use xlink:href="#icon-icon-copy"></use>
+                    </svg>
+                    <span class="modal-title" id="myModalLabel_1" style="font-size: 21px;position: relative;top: -3px;left: 2px;">注册</span>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align: center;color: rgba(0, 0, 0, 0.35);">——  使用手机号/邮箱注册猫爪  ——</div>
+                    <div class="input-group input-group-lg" style="margin-top: 16px;">
+                            <span class="input-group-addon" id="basic-addon5">
+                                <svg class="icon" aria-hidden="true" style="font-size: 22px;">
+                                  <use xlink:href="#icon-yonghuming1"></use>
+                                </svg>
+                            </span>
+                        <input type="text" class="form-control" placeholder="手机号/邮箱" aria-describedby="basic-addon5" />
+                    </div><br></br>
+                    <div class="input-group input-group-lg">
+                            <span class="input-group-addon" id="basic-addon3">
+                                <svg class="icon" aria-hidden="true" style="font-size: 22px;">
+                                  <use xlink:href="#icon-duanxinyanzhengmax"></use>
+                                </svg>
+                            </span>
+                        <input type="text" class="form-control" placeholder="验证码" aria-describedby="basic-addon3" style="width: 69%;"/>
+                    </div>
+                    <button type="button" th:onclick="'javascript:sendCode(this)'" id="code"
+                            class="btn btn-primary" autocomplete="off" style="position:
+                                absolute;left: 73%;top: 34%;height: 46px;background-color: #f5ab90;border-color: rgba(0, 0, 0, 0.37);width: 106px;">
+                        发送验证码
+                    </button>
+                    <br></br>
+                    <div class="input-group  input-group-lg">
+                            <span class="input-group-addon" id="basic-addon4">
+                                <svg class="icon" aria-hidden="true" style="font-size: 22px;">
+                                  <use xlink:href="#icon-mima"></use>
+                                </svg>
+                            </span>
+                        <input type="password" class="form-control" placeholder="密码" aria-describedby="basic-addon4" />
+                    </div>
+                    <div style="text-align: center;color: rgba(0, 0, 0, 0.35);margin-top: 16px;">——  用第三方帐号注册猫爪  ——</div>
+                    <div style="position: relative;margin-top: 15px;left: 38%;">
+                        <svg class="icon" aria-hidden="true" style="font-size: 50px;" th:onmouseover="'javascript:changeqq()'" th:onmouseout="'javascript:resetqq()'">
+                            <use xlink:href="#icon-weixin-" id="qq"></use>
+                        </svg>
+                        <svg class="icon" aria-hidden="true" style="font-size: 50px;" th:onmouseover="'javascript:changewb()'" th:onmouseout="'javascript:resetwb()'">
+                            <use xlink:href="#icon-weibo" id="wb"></use>
+                        </svg>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <span>已有猫爪账号?</span>
+                    <span><a href="#" th:onclick="'javascript:gologin()'" style="margin-right: 130px;">立即登录>></a></span>
+                    <button type="button" class="btn btn-primary" style="border-color: #fff;background-color: #fbd34a;width: 110px;" th:onclick="'javascript:register()'">注册</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <div style="width: 40%;margin: 0 auto;position: relative;top: 100px;">
+
+        <div style="padding: 25px;font-size: 35px;font-weight: 600;" th:text="${giftArticleDetailVo.giftArticleTitle}"></div>
+        <div style="margin-left: 25px;padding: 5px;">
+            <img th:src="${giftArticleDetailVo.userImgUrl}" alt="" style="border: 1px solid rgba(33, 33, 33, 0.31);height: 50px;width: 50px;border-radius: 100px;" />
+            <div style="margin-left: 60px;margin-top: -48px;">
+                <div>
+                    <span style="font-size: 18px" th:text="${giftArticleDetailVo.userName}"></span>
+                    <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" style="
+                    height: 24px;
+                    border-radius: 100px;
+                    margin-top: -4px;
+                    margin-left: 10px;
+                    border-color: #11d493;
+                    background-color: #11d493">
+                        <div style="margin-top: -5px;">
+                            <span>+</span><span style="font-size: 1px;">关注</span>
+                        </div>
+                    </button>
+                </div>
+                <div style="position: relative;top: 5px;">
+                    <span style="color: rgba(0, 0, 0, 0.45);" th:text="${giftArticleDetailVo.giftArticleCreateTime}"></span>
+                    <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="margin-left: 10px;">
+                        <use xlink:href="#icon-wodefankui"></use>
+                    </svg>
+                    <span style="color: rgba(0, 0, 0, 0.45);" th:text="${giftArticleDetailVo.commentCount}"></span>&nbsp;&nbsp;
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-jushoucang"></use>
+                    </svg>
+                    <span style="color: rgba(0, 0, 0, 0.45);" th:text="${giftArticleDetailVo.praiseCount}"></span>&nbsp;&nbsp;
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-tubiao215"></use>
+                    </svg>
+                    <span style="color: rgba(0, 0, 0, 0.45);" th:text="${giftArticleDetailVo.shareCount}"></span>
+                </div>
+            </div>
+        </div>
+        <img th:src="${giftArticleDetailVo.giftArticleImgUrl}" alt="" style="margin-top: 32px;width: 700px;width: 100%" />
+        <div>
+            <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" style="margin-top: 100px;
+            border-radius: 60px;
+            height: 70px;
+            width: 200px;
+            background-color: #fff;
+            border-color: #ff761f;
+            color: #ff761f;">
+                <div style="display: inline-block;font-size: 20px;padding: 15px 13px 18px 15px;">
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-jushoucang-copy"></use>
+                    </svg>
+                    <span>喜欢</span>
+                </div>
+                <div style="border-left: 1px solid rgba(236,97,73,.4);display: inline-block;font-size: 20px;padding: 4px 30px 4px 15px;" th:text="${giftArticleDetailVo.praiseCount}"></div>
+            </button>
+            <div style="display: inline-block;
+            font-size: 65px;
+            float: right;
+            margin-top: 88px;">
+                <svg class="icon" aria-hidden="true" style="position: relative;left: 12px;">
+                    <use xlink:href="#icon-weixin-"></use>
+                </svg>
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-weibo"></use>
+                </svg>
+                <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" style="margin-top: -10px;
+                border-radius: 60px;
+                margin-left: -5px;
+                height: 56px;
+                width: 121px;
+                background-color: #fff;
+                border-color: #9e948e;
+                color: #9e948e;">
+                    更多分享
+                </button>
+            </div>
+            <div style="margin-top: 75px;overflow: hidden;" th:if="${session.LOGIN_USER == null}">
+                <div>
+                    <img src="../img/7.jpg" alt="" style="border: 1px solid rgba(33, 33, 33, 0.31);width: 6%;border-radius: 100px;float: left;" />
+                </div>
+                    <div style="height: 100px;
+                    width: 91%;
+                    border-radius: 5px;
+                    border: 1px solid #dcdcdc;
+                    background-color: hsla(0,0%,71%,.1);
+                    float: left;
+                    margin-left: 3%;
+                     text-align: center">
+                        <div style="margin-top: 35px;">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" aria-pressed="false" autocomplete="off" style="border-radius: 60px;width: 75px;">
+                                登录
+                            </button><span style="margin-left: 10px;">后发表评论</span>
+                        </div>
+                    </div>
+            </div>
+            <div style="margin-top: 75px;overflow: hidden;" th:if="${session.LOGIN_USER != null}">
+                <div>
+                    <img th:src="${session.LOGIN_USER.imgUrl}" alt="" style="border: 1px solid rgba(33, 33, 33, 0.31);width: 35px;height:35px;float: left;" />
+                </div>
+                <div style="height: 100px;
+                    width: 91%;
+                    border-radius: 5px;
+                    border: 1px solid #dcdcdc;
+                    background-color: hsla(0,0%,71%,.1);
+                    float: left;
+                    margin-left: 3%;
+                     text-align: center" th:if="${session.LOGIN_USER == null}">
+                    <div style="margin-top: 35px;">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" aria-pressed="false" autocomplete="off" style="border-radius: 60px;width: 75px;">
+                            登录
+                        </button><span style="margin-left: 10px;">后发表评论</span>
+                    </div>
+                </div>
+                <div contentEditable="true" style="height: 100px;
+                    width: 91%;
+                    border-radius: 5px;
+                    border: 1px solid #dcdcdc;
+                    background-color: hsla(0,0%,71%,.1);
+                    float: left;
+                    margin-left: 3%;overflow: auto;padding: 15px;font-weight: 300;" class="write" th:if="${session.LOGIN_USER != null}">
+                    <!--说点什么吧...-->
+                </div>
+            </div>
+            <!-- 主评论 -->
+            <div style="margin-top: 115px;">
+                <div class="media" th:each="commentVo : ${giftArticleDetailVo.commentVoList}">
+                        <div class="media-left">
+                            <a href="#">
+                                <img class="media-object" th:src="${commentVo.userImgUrl}" alt="" style="border: 1px solid rgba(33, 33, 33, 0.31);border-radius: 100px;height: 50px; width: 50px;"/>
+                            </a>
+                        </div>
+                        <div class="media-body">
+                            <div class="media-heading" style="font-size: 15px;" th:text="${commentVo.userName}"></div>
+                            <div class="media-heading" style="font-size: 8px;color: #e4a79d;" th:text="${commentVo.floor}+'楼  '+${commentVo.createTime}"></div>
+                            <h4 class="media-heading" th:text="${commentVo.content}"></h4>
+                            <div style="color: rgba(0, 0, 0, 0.45);margin-top: 22px;">
+                                <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="font-size: 20px;">
+                                    <use xlink:href="#icon-dianzan"></use>
+                                </svg>
+                                <span style="font-size: 15px;">102人赞</span>
+                                <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="margin-left: 10px;font-size: 20px;">
+                                    <use xlink:href="#icon-wodefankui"></use>
+                                </svg>
+                            </div>
+
+
+                            <div class="media" th:each="sonCommentVo : ${commentVo.sonCommentVoList}">
+                                    <div class="media-left">
+                                        <a href="#">
+                                            <img class="media-object" th:src="${sonCommentVo.userImgUrl}" alt="" style="border: 1px solid rgba(33, 33, 33, 0.31);border-radius: 100px;height: 50px; width: 50px;"/>
+                                        </a>
+                                    </div>
+                                    <div class="media-body">
+                                        <div class="media-heading" style="font-size: 15px;" th:text="${sonCommentVo.userName}"></div>
+                                        <div class="media-heading" style="font-size: 8px;color: #e4a79d;" th:text="${sonCommentVo.floor}+'楼  '+${sonCommentVo.createTime}"></div>
+                                        <h4 class="media-heading" th:text="${sonCommentVo.content}"></h4>
+                                        <div style="color: rgba(0, 0, 0, 0.45);margin-top: 22px;">
+                                            <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="font-size: 20px;">
+                                                <use xlink:href="#icon-dianzan"></use>
+                                            </svg>
+                                            <span style="font-size: 15px;">102人赞</span>
+                                            <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="margin-left: 10px;font-size: 20px;">
+                                                <use xlink:href="#icon-wodefankui"></use>
+                                            </svg>
+                                        </div>
+
+
+                                        <div class="media" th:each="grandsonCommentVo : ${sonCommentVo.grandsonCommentVoList}">
+                                            <div class="media-body">
+                                                <span><a th:text="${grandsonCommentVo.userName}+':'"></a></span>
+                                                <span th:if="${grandsonCommentVo.replyId != grandsonCommentVo.fatherId}">
+                                                    <a th:text="'@'+${grandsonCommentVo.replyUserName}"></a>
+                                                </span>
+                                                <span class="media-heading" th:text="${grandsonCommentVo.content}"></span>
+                                                <div style="color: rgba(0, 0, 0, 0.45);margin-top: 22px;">
+                                                    <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="font-size: 12px;">
+                                                        <use xlink:href="#icon-dianzan"></use>
+                                                    </svg>
+                                                    <span style="font-size: 15px;">102人赞</span>
+                                                    <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="margin-left: 10px;font-size: 12px;">
+                                                        <use xlink:href="#icon-wodefankui"></use>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                            </div>
+
+
+                        </div>
+                </div>
+                <!--<div class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img class="media-object" src="./img/5.jpg" alt="..." style="border-radius: 100px;height: 50px; width: 50px;"/>
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <div class="media-heading" style="font-size: 15px;">小米</div>
+                        <div class="media-heading" style="font-size: 8px;color: #e4a79d;">2楼 2017-12-05 12:24</div>
+                        <h4 class="media-heading">这么多东西，太麻烦了。我减了40斤时候，就很简单，隔一天一次有氧运动，每次骑行100+公里。平均五天一斤肉的速度。</h4>
+                        <div style="color: rgba(0, 0, 0, 0.45);margin-top: 22px;">
+                            <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="font-size: 20px;">
+                                <use xlink:href="#icon-dianzan"></use>
+                            </svg>
+                            <span style="font-size: 15px;">102人赞</span>
+                            <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="margin-left: 10px;font-size: 20px;">
+                                <use xlink:href="#icon-wodefankui"></use>
+                            </svg>
+                        </div>
+
+                        <div class="media">
+                            <div class="media-left">
+                                <a href="#">
+                                    <img class="media-object" src="./img/5.jpg" alt="..." style="border-radius: 100px;height: 50px; width: 50px;"/>
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading" style="font-size: 15px;">小米</div>
+                                <div class="media-heading" style="font-size: 8px;color: #e4a79d;">2楼 2017-12-05 12:24</div>
+                                <h4 class="media-heading">这么多东西，太麻烦了。我减了40斤时候，就很简单，隔一天一次有氧运动，每次骑行100+公里。平均五天一斤肉的速度。</h4>
+                                <div style="color: rgba(0, 0, 0, 0.45);margin-top: 22px;">
+                                    <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="font-size: 20px;">
+                                        <use xlink:href="#icon-dianzan"></use>
+                                    </svg>
+                                    <span style="font-size: 15px;">102人赞</span>
+                                    <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="margin-left: 10px;font-size: 20px;">
+                                        <use xlink:href="#icon-wodefankui"></use>
+                                    </svg>
+                                </div>
+
+
+                                <div class="media">
+                                    <div class="media-body">
+                                        <span><a>笑话:</a></span>
+                                        <span></span>
+                                        <span class="media-heading">这么多东西，太麻烦了。我减了40斤时候，就很简单，隔一天一次有氧运动，每次骑行100+公里。平均五天一斤肉的速度。</span>
+                                        <div style="color: rgba(0, 0, 0, 0.45);margin-top: 22px;">
+                                            <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="font-size: 12px;">
+                                                <use xlink:href="#icon-dianzan"></use>
+                                            </svg>
+                                            <span style="font-size: 15px;">102人赞</span>
+                                            <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="margin-left: 10px;font-size: 12px;">
+                                                <use xlink:href="#icon-wodefankui"></use>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="media">
+                                    <div class="media-body">
+                                        <span><a>大门啊啊啊:</a></span>
+                                        <span><a>@笑话</a></span>
+                                        <span class="media-heading">这么多东西，太麻烦了。我减了40斤时候，就很简单，隔一天一次有氧运动，每次骑行100+公里。平均五天一斤肉的速度。</span>
+                                        <div style="color: rgba(0, 0, 0, 0.45);margin-top: 22px;">
+                                            <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="font-size: 12px;">
+                                                <use xlink:href="#icon-dianzan"></use>
+                                            </svg>
+                                            <span style="font-size: 15px;">102人赞</span>
+                                            <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="margin-left: 10px;font-size: 12px;">
+                                                <use xlink:href="#icon-wodefankui"></use>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="media">
+                            <div class="media-left">
+                                <a href="#">
+                                    <img class="media-object" src="./img/5.jpg" alt="..." style="border-radius: 100px;height: 50px; width: 50px;"/>
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading" style="font-size: 15px;">小米</div>
+                                <div class="media-heading" style="font-size: 8px;color: #e4a79d;">2楼 2017-12-05 12:24</div>
+                                <h4 class="media-heading">这么多东西，太麻烦了。我减了40斤时候，就很简单，隔一天一次有氧运动，每次骑行100+公里。平均五天一斤肉的速度。</h4>
+                                <div style="color: rgba(0, 0, 0, 0.45);margin-top: 22px;">
+                                    <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="font-size: 20px;">
+                                        <use xlink:href="#icon-dianzan"></use>
+                                    </svg>
+                                    <span style="font-size: 15px;">102人赞</span>
+                                    <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="margin-left: 10px;font-size: 20px;">
+                                        <use xlink:href="#icon-wodefankui"></use>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="media">
+                            <div class="media-left">
+                                <a href="#">
+                                    <img class="media-object" src="./img/5.jpg" alt="..." style="border-radius: 100px;height: 50px; width: 50px;"/>
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading" style="font-size: 15px;">小米</div>
+                                <div class="media-heading" style="font-size: 8px;color: #e4a79d;">2楼 2017-12-05 12:24</div>
+                                <h4 class="media-heading">这么多东西，太麻烦了。我减了40斤时候，就很简单，隔一天一次有氧运动，每次骑行100+公里。平均五天一斤肉的速度。</h4>
+                                <div style="color: rgba(0, 0, 0, 0.45);margin-top: 22px;">
+                                    <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="font-size: 20px;">
+                                        <use xlink:href="#icon-dianzan"></use>
+                                    </svg>
+                                    <span style="font-size: 15px;">102人赞</span>
+                                    <svg class="icon" aria-hidden="true" th:onclick="'javascript:openjudge()'" style="margin-left: 10px;font-size: 20px;">
+                                        <use xlink:href="#icon-wodefankui"></use>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+    </div>
+    <div style="padding-top: 250px;">
+        <div style="width: 82%;margin: 0 auto;">
+            <div style="position: relative;">
+                <span>以分类浏览猫爪</span><span style="position: absolute;right: 0px;">所有>></span>
+            </div>
+            <div style="margin-bottom: 20px;padding-bottom: 5px;border-bottom: 2px solid #ededed;"></div>
+        </div>
+        <div style="height: 225px;">
+            <ul class="ul">
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+                <li><a href="#">UI/UX</a></li>
+            </ul>
+        </div>
+        <div style="height: 200px;background-color: #333;">
+            <!--<div style="width: 80%;text-align: center;position: relative;top: 35px;">
+                <div class="di">
+                    <a>猫爪首页</a>
+                    <a>猫爪首页</a>
+                    <a>猫爪首页</a>
+                </div>
+                <div class="di">
+                    <a>猫爪首页</a>
+                    <a>猫爪首页</a>
+                    <a>猫爪首页</a>
+                </div>
+                <div class="di">
+                    <a>猫爪首页</a>
+                    <a>猫爪首页</a>
+                    <a>猫爪首页</a>
+                </div>
+            </div>-->
+        </div>
+        <div style="height: 60px;background-color: #000;">
+
+        </div>
+    </div>
+</body>
+</html>
